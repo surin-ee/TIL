@@ -18,9 +18,11 @@ WHERE
 
 +)
  SELECT
-* EXCEPT : 제외할 칼럼
+* EXCEPT : 제외할 컬럼
 
 # 2.4. SELECT 연습문제
+![orderopen](../img/1.png)
+
 # 2.5. 집계 (GROUP BY+HAVING+SUM/COUNT)
 ## 1. 집계와 그룹화 : 그룹화해서 계산
 ### 집계 : GROUP BY
