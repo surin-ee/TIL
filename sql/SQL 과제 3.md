@@ -1,4 +1,8 @@
 # 연습문제
+- 테이블
+- 조건
+- 컬럼
+- 집계
 ## 1번. type 2가 없는 포켓몬의 수 쿼리 작성
 
 ~~~
@@ -26,7 +30,7 @@ WHERE
 테이블 : poketmon
 조건 : type 2가 없는 포켓몬
 정렬 : type 2가 없는 포켓몬
-컬럼 : type 1
+컬럼 : type 1 (정보)
 집계 : 포켓몬 수 => COUNT
 정렬 : type1의 포켓몬 수가 큰 순으로 정렬 => ORDER BY. 
 ~~~
@@ -59,3 +63,138 @@ GROUP BY
 ```
 - DISTINCT ; 고유한(uique) 값만 보고 싶을 떄 사용
  - COUNT(id)=COUNT(DISTINCT id); id 설계 시 중복이 없게 설계함 그래서 두 개의 결과가 동일
+
+ ## 4번. 전설 여부에 따른 포켓몬을 알 수 있는 쿼리 작성
+ 
+ ```sql
+SELECT
+ is_legendary,
+ COUNT(id) AS poketmon_cnt
+FROM basic.poketmon
+GROUP BY
+ is_legendary
+```
+ - GROUP BY : is_legendary 같이 긴 컬럼은 숫자로 대체
+ - ex. GROUP BY 1 => SELECT의 첫 컬럼을 의미
+ - ORDER BY에도 사용가능
+ - 1,2  => 쿼리를 빠르게 작성하고 결과를 보는 과정에서만 사용. 명확하게 컬럼 명시해주는 것이 좋음(가독)
+
+## 5번. 동명이인
+
+ ```sql
+SELECT
+ name,
+ COUNT(name) AS trainer_cnt
+FROM basic.poketmon
+GROUP BY
+ name
+```
+ ```sql
+SELECT
+ *
+FROM (
+ SELECT
+ name,
+ COUNT(name) AS trainer_cnt
+FROM basic.poketmon
+GROUP BY
+ name
+)
+WHERE
+ trainer_cnt >=2
+```
+- HAVING ; 집계 후 조건, GROUP BY와 함꼐 집계결과에 조건을 설정하고 싶은 경우
+- WHERE ; GROUP BY와 함께 집계 결과에 조건을 설정하고 싶은 경우
+- 서브쿼리 : 쿼리문을 한번 감싸서 다른 쿼리문에 사용할 수 있음
+
+## 6번. trainer 테이블에서 'Iris' 트레이너의 정보를 알 수 있는 쿼리 작성
+
+ ```sql
+SELECT
+ *
+FROM basic.trainer
+WHERE
+ name = 'Iris'
+```
+
+## 7번. + Whitney & Cynthia
+ ```sql
+SELECT
+ *
+FROM basic.trainer
+WHERE
+ (name = 'Iris')
+ OR (name = "Cynthia")
+ OR (name ="Whitney") 
+```
+- OR 조건으로 쓰는 것이 너무 길다면 => IN
+- IN : name에 괄호 안의 Value가 있는 Row만 추출
+ 
+ ```sql
+SELECT
+ *
+FROM basic.trainer
+WHERE
+ name IN ('Iris', "Cynthia","Whitney") 
+```
+
+## 8번. 전체 포켓몬 수
+
+ ```sql
+SELECT
+ COUNT(id) AS poketmon_cnt
+FROM basic.trainer
+```
+
+- unrecognized name : 컬럼이름에 오타일 가능성이있음
+
+## 9번. 세대별 포켓몬 수 
+
+ ```sql
+SELECT
+ generation, 
+ COUNT(id) AS poketmon_cnt
+FROM basic.trainer
+GROUP BY
+ generation
+```
+
+## 10번. type2가 존제하는 포켓몬의 수
+
+ ```sql
+SELECT
+ COUNT(id) AS poketmon_cnt
+FROM basic.poketmon
+WHERE
+ type2 IS NOT NULL
+```
+
+## 11번. type2가 있는 포켓몬 중에 제일 많은 type 1
+
+ ```sql
+SELECT
+ type1, 
+ COUNT(id) AS poketmon_cnt
+FROM basic.poketmon
+WHERE
+ type2 IS NOT NULL
+ORDER BY
+ poketmon_cnt DESC
+LIMIT 1
+```
+- LIMIT 1: 첫 번째 행만 남긴다
+
+## 12번. 단일 타입 포켓몬 중 가장 많은 type1
+
+ ```sql
+SELECT
+ type1, 
+ COUNT(id) AS poketmon_cnt
+FROM basic.poketmon
+WHERE
+ type2 IS NOT NULL
+GROUP BY 
+ type1
+ORDER BY
+ poketmon_cnt DESC
+LIMIT 1
