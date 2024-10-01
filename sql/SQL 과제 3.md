@@ -198,3 +198,103 @@ GROUP BY
 ORDER BY
  poketmon_cnt DESC
 LIMIT 1
+```
+## 13번. 포켓몬 이름에 "파"가 들어가는 포켓몬
+
+ ```sql
+SELECT
+ kor_name
+FROM basic.poketmon
+WHERE
+ kor_name LIKE "%파%"
+ ```
+ - 컬럼 LIKE "특정단어%"에서 % 는 앞 뒤 다 붙을 수 있음
+ - "%파" : 파로 끝나는 단어, "파% : 파로 시작하는 단어,  "%파%" : 파가 들어가는 단어
+ - 문자열 칼람에서 특정 단어가 포함되어 있는지 알고 싶은 경우 LIKE사용
+
+## 14번. 뱃지가 6개 이상인 트레이너
+ ```sql
+SELECT
+ COUNT (id) AS trainer_cnt
+FROM basic.trainer
+WHERE
+ badge_count >=6
+ ```
+
+ ## 15번. 보유한 포켓몬이 가장 많은 트레이너
+  ```sql
+SELECT
+ trainer_id
+ COUNT (poketmon_id) AS poketmon_cnt
+ COUNT (DISTINCT poketmon_id) AS poketmon_cnt
+FROM basic.trainer_poketmon
+GROUP BY
+ trainer_id
+ ```
+ - DISTINCT로 중복확인
+
+ ## 16번. 포켓몬을 많이 풀어준 트레이너
+   ```sql
+SELECT
+ trainer_id
+ COUNT (poketmon_id) AS poketmon_cnt
+FROM basic.trainer_poketmon
+WHERE
+ status = "Released"
+GROUP BY
+ trainer_id
+ORDER BY
+ poketmon_cnt DESC
+LIMIT 1
+ ```
+
+-많이 풀어준 -> COUNT /ORDER BY/ LIMIT
+
+## 17번. 풀어준 포켓몬 비율이 20%가 넘는 트레이너
+
+   ```sql
+SELECT
+ trainer_id,
+ COUNTIF(status= "Released") AS released_cnt
+ COUNT(poketmon_id) AS poketmon_cnt
+ COUNTIF(status= "Released")/COUNT(poketmon_id) AS released_ratio
+FROM basic.trainer_poketmon
+GROUP BY
+ trainer_id
+HAVING
+ released_ratio>=0.2
+ ```
+
+ - COUNTIF=COUNT+WHERE 
+ - HAVING ; 집계 후 조건
+
+ ## 정리. 
+ ~~~
+ 단일 자료의 데이터를 탐색하는 법
+
+ - 조건(필터링) : WHERE+FROM/ HAVING/ 서브쿼리
+ - 추출 : SELECT
+ - 변환
+ - 요약(집계) : GROUP BY/ GROUP BY ALL
+  +) AVG/ COUNT/ COUNTIF/ SUM/ MAX/ MIN
+  +) 정렬 : ORDER BY (DESC), LIMIT
+  ~~~
+
+# SQL 쿼리 잘 작성하기, 쿼리 작성 템플릿 및 오류를 잘 디버깅하기
+
+## 1. SQL 쿼리 작성 흐름
+![orderopen](../img/SQL3.png)
+
+## 2. 쿼리 작성 템플릿과 생산성 도구
+
+~~~
+템플릿 ;
+# 쿼리 작성 목표, 확인할 지표 : 정의
+# 쿼리 계산 방법
+# 데이터의 기간
+# 사용할 테이블
+# Join KEY
+# 데이터 특징
+
+but 템플릿을 사용하는 것이 힘듦 -> 생산성 도구 사용 
+* Espanso : 특정 단어가 감지되면 정의된 것으로 바꿔줌
