@@ -167,3 +167,5 @@ TIMESTAMP
 DATETIME
 - 타임존이 T가 나옴(TIME)
 - 한국 Zone 사용시 한국 시간과 동일
+~~~
+![orderopen](../img/SQL4인증.png)
